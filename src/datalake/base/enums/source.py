@@ -8,6 +8,8 @@ class SourceType(BaseEnum):
 
 class SourceSubType(BaseEnum):
     CSV = "CSV"
+    JSON = "JSON"
     EXCEL = "EXCEL"
     ORACLE = "ORACLE"
     MSSQL = "MSSQL"
+    PARQUET = "PARQUET"

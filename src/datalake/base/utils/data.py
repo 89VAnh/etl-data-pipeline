@@ -1,11 +1,12 @@
-from datalake.base.model.meta_extract import ExtractMeta
+import re
+from datalake.base.meta.meta_job import ExtractMeta
 from datalake.base.utils.logger import Logger
 from datalake.base.utils.str import StringUtils
 from datalake.base.utils.date import DateUtils
 from datetime import datetime
 import boto3
-import re
 import io
+from pyspark.sql.functions import lit
 
 LOGGER = Logger.get_logger(__name__)
 
@@ -19,6 +20,21 @@ class DataUtils:
             return None
 
     @staticmethod
+    def align_and_union(df1, df2):
+        # Add missing columns to df1
+        for col in set(df2.columns) - set(df1.columns):
+            df1 = df1.withColumn(col, lit(None))
+
+        # Add missing columns to df2
+        for col in set(df1.columns) - set(df2.columns):
+            df2 = df2.withColumn(col, lit(None))
+
+        # Ensure column order is the same before union
+        return df1.select(sorted(df1.columns)).unionByName(
+            df2.select(sorted(df2.columns))
+        )
+
+    @staticmethod
     def get_list_objects(
         extract_meta: ExtractMeta, from_date: datetime = None, to_date: datetime = None
     ):
@@ -29,27 +45,22 @@ class DataUtils:
             to_date = DateUtils.to_utc(to_date)
         s3_client = boto3.client("s3")
         paginator = s3_client.get_paginator("list_objects_v2")
-        file_name, date_format, extension = StringUtils.split_file_name(
-            extract_meta.source_object
-        )
-        date_pattern = StringUtils.reformated_date_pattern(date_format)
-        object_key_pattern = StringUtils.build_string(
+
+        prefix = StringUtils.build_string(
+            extract_meta.source_database,
             extract_meta.source_schema,
-            f"{file_name}{date_pattern}{extension}$",
+            extract_meta.source_object,
             separator="/",
         )
-        prefix = StringUtils.build_string(
-            extract_meta.source_schema, file_name, separator="/"
-        )
+        object_pattern = r".*/\d{14}.json$"
         LOGGER.debug("file prefix : %s", prefix)
-        LOGGER.debug("filter pattern : %s", object_key_pattern)
         pages = paginator.paginate(Bucket=extract_meta.source_zone, Prefix=prefix)
         paths = []
         for page in pages:
             if "Contents" in page:
                 for obj in page["Contents"]:
                     LOGGER.debug("object: %s", obj)
-                    if re.match(object_key_pattern, obj["Key"]):
+                    if re.match(object_pattern, obj["Key"]):
                         if is_get_all:
                             paths.append(
                                 f"s3a://{extract_meta.source_zone}/{obj['Key']}"

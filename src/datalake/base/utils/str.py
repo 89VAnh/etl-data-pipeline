@@ -23,7 +23,7 @@ class StringUtils(object):
         match = re.match(pattern, file_name)
         if match:
             return match.group(1) + match.group(2), match.group(3), match.group(4)
-        return None, None, None  # Trả về None nếu không khớp
+        return None, None, None
 
     @staticmethod
     def reformated_date_pattern(date_pattern: str):

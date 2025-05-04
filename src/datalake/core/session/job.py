@@ -37,11 +37,17 @@ class JobSession:
                 from awsglue.utils import getResolvedOptions
                 import sys
 
-                if args_options:
-                    args = getResolvedOptions(sys.argv, args_options)
-                else:
-                    args = getResolvedOptions(sys.argv, config.JOB_DEFAULT_PARAMS)
-                return args
+                # if args_options:
+                #     args = getResolvedOptions(sys.argv, args_options)
+                # else:
+                #     args = getResolvedOptions(sys.argv, config.JOB_DEFAULT_PARAMS)
+
+                # return args
+                return {
+                    "JOB_NAME": "demo",
+                    "JOB_RUN_ID": "xyz",
+                    "JOB_TYPE": "INGESTION",
+                }
             case SparkEnv.LOCAL:
                 return {
                     "JOB_NAME": "demo",
@@ -49,4 +55,4 @@ class JobSession:
                     "JOB_TYPE": "INGESTION",
                 }
             case _:
-                raise Exception("[get_args] Don't spark_env=%s env=%s", spark_env, env)
+                raise Exception(f"[get_args] Don't spark_env={spark_env} env={env}")

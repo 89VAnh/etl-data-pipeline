@@ -1,0 +1,68 @@
+[
+  {
+    "id": 2,
+    "name": "task2",
+    "job_name": "etl_ingestion_2",
+    "extracts": [
+      {
+        "type": "INCREMENTAL",
+        "params": {
+          "HEADER": "true"
+        },
+        "schema": "",
+        "source": {
+          "object": "data",
+          "schema": "dev",
+          "database": "target",
+          "zone": "vietanh21-ecom-silver-zone",
+          "type": "S3",
+          "sub_type": "PARQUET"
+        },
+        "connection": {
+          "name": "",
+          "url": "",
+          "host": "",
+          "port": "",
+          "database": "",
+          "username": "",
+          "password": "",
+          "driver": ""
+        },
+        "criteria": {
+          "col": "",
+          "format": "",
+          "value": "",
+          "dtype": ""
+        },
+        "limit": 100000,
+        "batch": 2
+      }
+    ],
+    "udf_infos": [],
+    "transform": "",
+    "load": {
+      "type": "OVERWRITE",
+      "params": {},
+      "schema": "",
+      "target": {
+        "object": "data",
+        "schema": "dev",
+        "database": "target",
+        "zone": "s3a://vietanh21-ecom-gold-zone",
+        "type": "S3",
+        "sub_type": "PARQUET"
+      },
+      "connection": {
+        "name": "",
+        "url": "",
+        "host": "",
+        "port": "",
+        "database": "",
+        "username": "",
+        "password": "",
+        "driver": ""
+      }
+    },
+    "status": true
+  }
+]

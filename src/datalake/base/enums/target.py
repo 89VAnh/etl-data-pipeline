@@ -1,9 +1,8 @@
 from datalake.base.enums.base_enum import BaseEnum
-from datalake.base.utils.str import StrUtil
 
 
 class TargetType(BaseEnum):
-    DATABASE = "database"
+    DATABASE = "DATABASE"
     S3 = "S3"
     ICEBERG = "ICEBERG"
 
@@ -13,3 +12,4 @@ class TargetSubType(BaseEnum):
     EXCEL = "EXCEL"
     ORACLE = "ORACLE"
     MSSQL = "MSSQL"
+    PARQUET = "PARQUET"

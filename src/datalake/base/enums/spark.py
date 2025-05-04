@@ -1,4 +1,3 @@
-from datalake.base import config
 from datalake.base.enums.base_enum import BaseEnum
 from datalake.base.enums.env import Env
 
@@ -10,7 +9,8 @@ class SparkEnv(BaseEnum):
 
     @staticmethod
     def get_env(env: Env):
-        spark_env = config.SPARK_ENV
+        spark_env = SparkEnv.GLUE
         if env == Env.DEV:
-            spark_env = SparkEnv.LOCAL
+            # spark_env = SparkEnv.LOCAL
+            spark_env = SparkEnv.GLUE
         return spark_env

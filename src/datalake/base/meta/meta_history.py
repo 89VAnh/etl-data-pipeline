@@ -2,7 +2,7 @@ import json
 
 from datalake.base.enums.extract import ExtractType
 from datalake.base.enums.source import SourceType, SourceSubType
-from datalake.base.utils.json import JsonUtil
+from datalake.base.utils.json import JsonUtils
 from datalake.base.utils.logger import Logger
 
 LOGGER = Logger.get_logger(__name__)
@@ -12,37 +12,22 @@ LOGGER = Logger.get_logger(__name__)
 """
 
 
-class ExtractMeta:
-    type: ExtractType
-    params: dict
-    schema: str
-    source_object: str
-    source_schema: str
-    source_database: str
-    source_zone: str
-    source_type: SourceType
-    source_sub_type: SourceSubType
-    source_script: str
-    source_path: str
-    connection_name: str
-    connection_url: str
-    connection_host: str
-    connection_port: str
-    connection_database: str
-    connection_username: str
-    connection_password: str
-    connection_driver: str
-    criteria_col: str
-    criteria_format: str
-    criteria_value: str
-    criteria_dtype: str
-    limit: int
-    batch: int
-    size: int
+class HistoryMeta:
+    job_name: str = None
+    source_object: str = None
+    source_schema: str = None
+    source_database: str = None
+    criteria_value: str = None
+    criteria_dtype: str = None
+    target_object: str = None
+    target_schema: str = None
+    target_database: str = None
+    status: str = None
+    message: str = None
 
-    def __init__(self, extract_data: dict = None):
-        if extract_data is not None:
-            extract_flat = JsonUtil.flatten_json(extract_data, ["params"])
+    def __init__(self, hist_meta: dict = None):
+        if hist_meta is not None:
+            extract_flat = JsonUtils.flatten_json(hist_meta)
             for key, value in extract_flat.items():
                 self.setattr(key, value)
 

@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1,
+    "name": "task1",
+    "job_name": "etl_ingestion_1",
+    "extracts": [
+      {
+        "type": "INCREMENTAL",
+        "schema": "",
+        "source": {
+          "object": "",
+          "schema": "results",
+          "database": "",
+          "zone": "vietanh21-ecom-raw-zone",
+          "type": "S3",
+          "sub_type": "JSON",
+          "script": ""
+        },
+        "connection": {
+          "name": "",
+          "url": "",
+          "host": "",
+          "port": "",
+          "database": "",
+          "username": "",
+          "password": "",
+          "driver": ""
+        },
+        "criteria": {
+          "col": "",
+          "format": "",
+          "value": "",
+          "dtype": ""
+        },
+        "limit": 100000,
+        "batch": 2
+      }
+    ],
+    "udf_infos": [],
+    "transform": "",
+    "load": {
+      "type": "OVERWRITE",
+      "params": {},
+      "schema": "",
+      "target": {
+        "object": "",
+        "schema": "results",
+        "database": "ecom",
+        "zone": "s3a://vietanh21-ecom-silver-zone",
+        "type": "ICEBERG"
+      },
+      "connection": {
+        "name": "",
+        "url": "",
+        "host": "",
+        "port": "",
+        "database": "",
+        "username": "",
+        "password": "",
+        "driver": ""
+      }
+    },
+    "status": true
+  }
+]

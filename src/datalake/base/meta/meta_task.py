@@ -1,11 +1,10 @@
-from datalake.base.model.meta_extract import ExtractMeta
-from datalake.base.model.meta_load import LoadMeta
+from datalake.base.meta.meta_job import ExtractMeta, LoadMeta
 from datalake.base.utils.logger import Logger
 
 LOGGER = Logger.get_logger(__name__)
 
 
-class MetaScenario:
+class MetaTask:
     extracts: list[ExtractMeta]
     udf_infos: list
     transform: str

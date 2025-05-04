@@ -4,47 +4,42 @@ from datalake.base.components.metadata.imetadata import IMetadata
 from datalake.base.meta.meta_task import MetaTask
 from datalake.base.meta.meta_history import HistoryMeta
 from datalake.base.utils.date import DateUtils
-from datalake.base.utils.data import DataUtils
 from datalake.base.utils.logger import Logger
 
 LOGGER = Logger.get_logger(__name__)
 
 
-class S3Metadata(IMetadata):
-    metadata_bucket = "vietanh21-ecom-crawl-data"
-    history_object_key = "metadata/history/history.json"
+class LocalMetadata(IMetadata):
+
+    def __init__(self, session):
+        super().__init__(session)
+        self.history_path = "/home/glue_user/etl-data-pipeline/histories/history.json"
 
     def load_scenarios(self):
-        scenario_object_key = f"metadata/scenarios/{self.job_name}.json"
-        with DataUtils.read_s3_object(self.metadata_bucket, scenario_object_key) as f:
-            data = json.load(f)
+        with open(
+            f"/home/glue_user/etl-data-pipeline/scenarioes/{self.job_name}.json",
+            mode="r",
+        ) as file:
+            data = json.load(file)
         metas = [x for x in data if x["status"] == True]
         for meta in metas:
             self.scenarios.append(MetaTask(meta))
 
     def save_history(self, history):
         LOGGER.debug("history response from scenario: %s", history.__dict__)
-        with DataUtils.read_s3_object(
-            self.metadata_bucket, self.history_object_key
-        ) as f:
+        with open(self.history_path, mode="r") as f:
             histories = json.load(f)
         if history.criteria_value:
             history.criteria_value = DateUtils.strftime(
                 history.criteria_value, "%Y-%m-%d %H:%M:%S"
             )
         histories.append(history.__dict__)
-        DataUtils.write_s3_object(
-            self.metadata_bucket,
-            self.history_object_key,
-            json.dumps(histories).encode("utf-8"),
-        )
+        with open(self.history_path, mode="w") as f:
+            f.write(json.dumps(histories))
 
     def get_latest_history(self, meta_extract, meta_load):
-        with DataUtils.read_s3_object(
-            self.metadata_bucket, self.history_object_key
-        ) as f:
-            data = json.load(f)
-        histories: list[HistoryMeta] = [HistoryMeta(hist) for hist in data]
+        with open(self.history_path, mode="r") as f:
+            histories: list[HistoryMeta] = [HistoryMeta(hist) for hist in json.load(f)]
         latest_date = DateUtils.min_date()
         for history in histories:
             if (
